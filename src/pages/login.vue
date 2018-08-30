@@ -30,7 +30,9 @@ export default {
     created () {},
     mounted () {},
     methods: {
-        onSubmit() {}
+        onSubmit() {
+            this.$router.push('/layout')
+        }
     }
 }
 

@@ -1,8 +1,12 @@
 #article-list {
     padding: 20px;
-    background: #fff
-}
-
-#article-list .el-table th{
-    text-align: center;
+    background: #fff;
+    .pagination {
+        margin-top: 10px;
+        width: 100%;
+        overflow: hidden;
+    }
+    .el-table th{
+        text-align: center;
+    }
 }
