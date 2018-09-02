@@ -37,16 +37,21 @@
                         children: [
                             {
                                 id: '11',
+                                title: '写文章',
+                                url: '/article-add'
+                            },
+                            {
+                                id: '12',
                                 title: '文章列表',
                                 url: '/article-list'
                             },
                             {
-                                id: '12',
+                                id: '13',
                                 title: '草稿箱',
                                 url: '/article-drafts'
                             },
                             {
-                                id: '13',
+                                id: '14',
                                 title: '回收站',
                                 url: '/article-recycle'
                             }

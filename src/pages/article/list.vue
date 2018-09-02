@@ -1,13 +1,14 @@
 <template>
     <div id="article-list" v-loading="loading">
         <el-form :inline="true" :model="formInline" class="demo-form-inline">
-            <el-form-item label="审批人">
-                <el-input v-model="formInline.user" placeholder="审批人"></el-input>
+            <el-form-item label="文章名称">
+                <el-input v-model="formInline.articleName" placeholder="文章名称"></el-input>
             </el-form-item>
-            <el-form-item label="活动区域">
-                <el-select v-model="formInline.region" placeholder="活动区域">
-                <el-option label="区域一" value="shanghai"></el-option>
-                <el-option label="区域二" value="beijing"></el-option>
+            <el-form-item label="时间">
+                <el-select v-model="formInline.timeRange" placeholder="全部">
+                <el-option label="近一周" value="week"></el-option>
+                <el-option label="近一个月" value="month"></el-option>
+                <el-option label="近三个月" value="threeMonth"></el-option>
                 </el-select>
             </el-form-item>
             <el-form-item>
@@ -16,7 +17,7 @@
         </el-form>
         <el-table
             ref="multipleTable"
-            :data="tableData"
+            :data="articleList"
             tooltip-effect="dark"
             style="width: 100%"
             border
@@ -26,19 +27,19 @@
                 width="55">
             </el-table-column>
             <el-table-column
-                label="日期"
-                width="120">
-                <template slot-scope="scope">{{ scope.row.date }}</template>
+                label="文章名称"
+                prop="articleTitle"
+                show-overflow-tooltip>
             </el-table-column>
             <el-table-column
-                prop="name"
-                label="姓名"
+                prop="articleType"
+                label="文章类别"
                 width="120">
-                </el-table-column>
-                <el-table-column
-                prop="address"
-                label="地址"
-                show-overflow-tooltip>
+            </el-table-column>
+            <el-table-column
+                prop="articleCreatedTime"
+                label="创建时间"
+                width="240">
             </el-table-column>
             <el-table-column label="操作" fixed="right" width="200">
                 <template slot-scope="scope">
@@ -57,75 +58,69 @@
                 @size-change="handleSizeChange"
                 @current-change="handleCurrentChange"
                 :current-page="currentPage"
-                :page-sizes="[10, 15, 20]"
+                :page-sizes="[1, 15, 20]"
+                :page-size="pageSize"
                 layout="total, sizes, prev, pager, next, jumper"
-                :total="100">
+                :total="total">
             </el-pagination>
         </div>
     </div>
 </template>
 
 <script>
+
+  import axios from 'axios'
   export default {
     data() {
       return {
         loading: false,
         currentPage: 1,
         formInline: {
-          user: '',
-          region: ''
+          articleTitle: '',
+          timeRange: ''
         },
-        tableData: [{
-          date: '2016-05-03',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        }, {
-          date: '2016-05-02',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        }, {
-          date: '2016-05-04',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        }, {
-          date: '2016-05-01',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        }, {
-          date: '2016-05-08',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        }, {
-          date: '2016-05-06',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        }, {
-          date: '2016-05-07',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        },{
-          date: '2016-05-03',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        }, {
-          date: '2016-05-02',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        }, {
-          date: '2016-05-04',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        }],
+        pageSize: 10,
+        currentPage: 1,
+        total: 0,
+        articleList: [],
         multipleSelection: []
       }
     },
-
+    created (){
+        this.initArticleList()
+    },
     methods: {
-        search() {},
+        initArticleList () {
+            this.loading = true
+            let params = {
+                articleTitle: this.formInline.articleTitle,
+                pageSize: this.pageSize,
+                currentPage: this.currentPage
+            }
+            axios.get('http://localhost:8888/api/getArticleList', {params: params}).then(res => {
+                let data = res.data
+                this.loading = false
+                if (data.code == '000000') {
+                    this.articleList = data.data.articleList
+                    this.total = data.data.total
+                } else {
+                    this.$message.error('操作失败')
+                }
+            })  
+        },
+        search() {
+            this.initArticleList()
+            console.log(this.formInline)
+        },
         handleSizeChange(val) {
+            this.pageSize = val
+            this.currentPage = 0
+            this.initArticleList()
             console.log(`每页 ${val} 条`);
         },
         handleCurrentChange(val) {
+            this.currentPage = val
+            this.initArticleList()
             console.log(`当前页: ${val}`);
         },
         handleSelectionChange(val) {
@@ -142,5 +137,5 @@
   }
 </script>
 <style lang='scss'>
-    @import '@/assets/scss/articles/list.scss';
+@import "@/assets/scss/articles/list.scss";
 </style>

@@ -6,6 +6,7 @@ import layout from '@/pages/layout'
 
 import home from '@/pages/index'
 
+import articleAdd from '@/pages/article/add'
 import articleList from '@/pages/article/list'
 import articleDrafts from '@/pages/article/drafts'
 import articleRecycle from '@/pages/article/recycle'
@@ -27,6 +28,11 @@ export default new Router({
                 path: '/',
                 name: 'home',
                 component: home,
+            },
+            {
+                path: '/article-add',
+                name: 'articleAdd',
+                component: articleAdd,
             },
             {
                 path: '/article-list',
