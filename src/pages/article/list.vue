@@ -2,7 +2,13 @@
     <div id="article-list" v-loading="loading">
         <el-form :inline="true" :model="formInline" class="demo-form-inline">
             <el-form-item label="文章名称">
-                <el-input v-model="formInline.articleName" placeholder="文章名称"></el-input>
+                <el-input v-model="formInline.articleTitle" placeholder="文章名称"></el-input>
+            </el-form-item>
+            <el-form-item label="文章类别">
+                <el-select v-model="formInline.articleType" placeholder="全部">
+                <el-option label="编程" value="code"></el-option>
+                <el-option label="文章" value="article"></el-option>
+                </el-select>
             </el-form-item>
             <el-form-item label="时间">
                 <el-select v-model="formInline.timeRange" placeholder="全部">
@@ -13,6 +19,7 @@
             </el-form-item>
             <el-form-item>
                 <el-button type="primary" @click="search">搜索</el-button>
+                <el-button @click="reset">重置</el-button>
             </el-form-item>
         </el-form>
         <el-table
@@ -45,6 +52,7 @@
                 <template slot-scope="scope">
                     <el-button
                     size="mini"
+                    type="primary"
                     @click="handleEdit(scope.row)">编辑</el-button>
                     <el-button
                     size="mini"
@@ -70,13 +78,14 @@
 <script>
 
   import axios from 'axios'
+  const moment = require('moment')
   export default {
     data() {
       return {
         loading: false,
-        currentPage: 1,
         formInline: {
           articleTitle: '',
+          articleType: '',
           timeRange: ''
         },
         pageSize: 10,
@@ -94,6 +103,8 @@
             this.loading = true
             let params = {
                 articleTitle: this.formInline.articleTitle,
+                articleType: this.formInline.articleType,
+                articleStatus: '1',
                 pageSize: this.pageSize,
                 currentPage: this.currentPage
             }
@@ -102,6 +113,15 @@
                 this.loading = false
                 if (data.code == '000000') {
                     this.articleList = data.data.articleList
+                    this.articleList.forEach(item => {
+                        item.articleCreatedTime = moment(item.articleCreatedTime).format('YYYY-MM-DD HH:mm:ss')
+                        if (item.articleType == 'code') {
+                            item.articleType = '编程'
+                        }
+                        if (item.articleType == 'article') {
+                            item.articleType = '文章'
+                        }
+                    })
                     this.total = data.data.total
                 } else {
                     this.$message.error('操作失败')
@@ -109,12 +129,20 @@
             })  
         },
         search() {
+            this.currentPage = 1
             this.initArticleList()
             console.log(this.formInline)
         },
+        reset() {
+            this.formInline.articleTitle = ''
+            this.formInline.articleType = ''
+            this.formInline.timeRange = ''
+            this.currentPage = 1
+            this.initArticleList()
+        },
         handleSizeChange(val) {
             this.pageSize = val
-            this.currentPage = 0
+            this.currentPage = 1
             this.initArticleList()
             console.log(`每页 ${val} 条`);
         },
@@ -131,7 +159,23 @@
             console.log(data)
         },
         handleDelete(data) {
-            console.log(data)
+            this.$confirm('确认删除？')
+            .then(_ => {
+                axios.post('http://localhost:8888/api/delArticle', {deletArticleId: data._id}).then(res => {
+                    let data = res.data
+                    this.loading = false
+                    if (data.code == '000000') {
+                        this.$message({
+                            message: '删除成功',
+                            type: 'success'
+                        })
+                        this.initArticleList()
+                    } else {
+                        this.$message.error('操作失败')
+                    }
+                })
+            })
+            .catch(_ => {})
         }
     }
   }
