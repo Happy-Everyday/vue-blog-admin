@@ -93,7 +93,46 @@
                     
                 })
             },
-            save() {},
+            save() {
+                if (this.form.articleTitle == '') {
+                    this.$message.error('文章名称不能为空')
+                    return
+                }
+                if (this.form.articleType == '') {
+                    this.$message.error('请选择文章类别')
+                    return
+                }
+                if (this.textValue == '') {
+                    this.$message.error('文章内容不能为空')
+                    return
+                }
+                let articleObj = {
+                    articleImgUrl: '',
+                    articleTitle: this.form.articleTitle,
+                    articleType:  this.form.articleType,
+                    articleText: this.textValue,
+                    articleRender: this.textRender,
+                    articleStatus: '0'
+                }
+                this.loading = true
+                axios.post('http://localhost:8888/api/addArticle',articleObj).then(res => {
+                    let data = res.data
+                    this.loading = false
+                    if (data.code == '000000') {
+                        this.$message({
+                            message: '保存至草稿箱',
+                            type: 'success'
+                        })
+                        this.form.articleTitle = ''
+                        this.form.articleType = ''
+                        this.textValue = ''
+                        this.textRender = ''
+                    } else {
+                        this.$message.error('操作失败')
+                    }
+                    
+                })
+            },
             deletAll() {}
         }
     }
