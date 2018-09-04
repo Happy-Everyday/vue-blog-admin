@@ -120,6 +120,11 @@
                         articleRender: this.textRender,
                         articleStatus: '0'
                     }
+                    if (articleObj.articleType == 'code') {
+                        articleObj.articleTypeName = '编程'
+                    } else if (articleObj.articleType == 'article') {
+                        articleObj.articleTypeName = '文章'
+                    }
                     this.loading = true
                     axios.post('http://localhost:8888/api/addArticle',articleObj).then(res => {
                         let data = res.data

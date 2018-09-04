@@ -32,7 +32,7 @@
                 show-overflow-tooltip>
             </el-table-column>
             <el-table-column
-                prop="articleType"
+                prop="articleTypeName"
                 label="文章类别"
                 width="120">
             </el-table-column>
@@ -111,12 +111,6 @@
                     this.articleList = data.data.articleList
                     this.articleList.forEach(item => {
                         item.articleCreatedTime = moment(item.articleCreatedTime).format('YYYY-MM-DD HH:mm:ss')
-                        if (item.articleType == 'code') {
-                            item.articleType = '编程'
-                        }
-                        if (item.articleType == 'article') {
-                            item.articleType = '文章'
-                        }
                     })
                     this.total = data.data.total
                 } else {
@@ -156,6 +150,11 @@
             this.$confirm('确认发布？')
             .then(_ => {
                 articleObj.articleStatus = '1'
+                if (articleObj.articleType == 'code') {
+                    articleObj.articleTypeName = '编程'
+                } else if (articleObj.articleType == 'article') {
+                    articleObj.articleTypeName = '文章'
+                }
                 axios.post('http://localhost:8888/api/updateArticle', articleObj).then(res => {
                     let data = res.data
                     this.loading = false
@@ -180,6 +179,11 @@
             this.$confirm('确认移至回收站？')
             .then(_ => {
                 articleObj.articleStatus = '2'
+                if (articleObj.articleType == 'code') {
+                    articleObj.articleTypeName = '编程'
+                } else if (articleObj.articleType == 'article') {
+                    articleObj.articleTypeName = '文章'
+                }
                 axios.post('http://localhost:8888/api/updateArticle', articleObj).then(res => {
                     let data = res.data
                     this.loading = false
