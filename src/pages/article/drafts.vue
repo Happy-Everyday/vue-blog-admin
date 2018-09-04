@@ -10,13 +10,6 @@
                 <el-option label="文章" value="article"></el-option>
                 </el-select>
             </el-form-item>
-            <el-form-item label="时间">
-                <el-select v-model="formInline.timeRange" placeholder="全部">
-                <el-option label="近一周" value="week"></el-option>
-                <el-option label="近一个月" value="month"></el-option>
-                <el-option label="近三个月" value="threeMonth"></el-option>
-                </el-select>
-            </el-form-item>
             <el-form-item>
                 <el-button type="primary" @click="search">搜索</el-button>
                 <el-button @click="reset">重置</el-button>
@@ -48,7 +41,7 @@
                 label="创建时间"
                 width="240">
             </el-table-column>
-            <el-table-column label="操作" fixed="right" width="200">
+            <el-table-column label="操作" fixed="right" width="300">
                 <template slot-scope="scope">
                     <el-button
                     size="mini"
@@ -56,8 +49,12 @@
                     @click="handleEdit(scope.row)">编辑</el-button>
                     <el-button
                     size="mini"
+                    type="success"
+                    @click="handlePublich(scope.row)">发布</el-button>
+                    <el-button
+                    size="mini"
                     type="danger"
-                    @click="handleDelete(scope.row)">删除</el-button>
+                    @click="handleDelete(scope.row)">移至回收站</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -85,8 +82,7 @@
         loading: false,
         formInline: {
           articleTitle: '',
-          articleType: '',
-          timeRange: ''
+          articleType: ''
         },
         pageSize: 10,
         currentPage: 1,
@@ -155,18 +151,41 @@
             this.multipleSelection = val
             console.log(this.multipleSelection)
         },
-        handleEdit(data) {
-            console.log(data)
-        },
-        handleDelete(data) {
-            this.$confirm('确认删除？')
+        handlePublich(data) {
+            let articleObj = data
+            this.$confirm('确认发布？')
             .then(_ => {
-                axios.post('http://localhost:8888/api/delArticle', {deletArticleId: data._id}).then(res => {
+                articleObj.articleStatus = '1'
+                axios.post('http://localhost:8888/api/updateArticle', articleObj).then(res => {
                     let data = res.data
                     this.loading = false
                     if (data.code == '000000') {
                         this.$message({
-                            message: '删除成功',
+                            message: '发布成功',
+                            type: 'success'
+                        })
+                        this.initArticleList()
+                    } else {
+                        this.$message.error('操作失败')
+                    }
+                })
+            })
+            .catch(_ => {})
+        },
+        handleEdit(data) {
+            console.log(data)
+        },
+        handleDelete(data) {
+            let articleObj = data
+            this.$confirm('确认移至回收站？')
+            .then(_ => {
+                articleObj.articleStatus = '2'
+                axios.post('http://localhost:8888/api/updateArticle', articleObj).then(res => {
+                    let data = res.data
+                    this.loading = false
+                    if (data.code == '000000') {
+                        this.$message({
+                            message: '移动成功',
                             type: 'success'
                         })
                         this.initArticleList()

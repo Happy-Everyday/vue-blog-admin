@@ -16,8 +16,8 @@
         <mavon-editor style="height: 100%" :value='textValue' @change="changeValue"></mavon-editor>
         <div class="button-group">
             <el-button type="success" @click='publich'>发布</el-button>
-            <el-button type="primary" @click='save'>保存</el-button>
-            <el-button type="danger"  @click='deletAll'>全部删除</el-button>
+            <el-button type="primary" @click='save'>保存至草稿箱</el-button>
+            <el-button type="danger"  @click='deletAll'>全部重置</el-button>
         </div>
     </div>
 </template>
@@ -66,74 +66,91 @@
                     this.$message.error('文章内容不能为空')
                     return
                 }
-                let articleObj = {
-                    articleImgUrl: '',
-                    articleTitle: this.form.articleTitle,
-                    articleType:  this.form.articleType,
-                    articleText: this.textValue,
-                    articleRender: this.textRender,
-                    articleStatus: '1'
-                }
-                this.loading = true
-                axios.post('http://localhost:8888/api/addArticle',articleObj).then(res => {
-                    let data = res.data
-                    this.loading = false
-                    if (data.code == '000000') {
-                        this.$message({
-                            message: '发布成功',
-                            type: 'success'
-                        })
-                        this.form.articleTitle = ''
-                        this.form.articleType = ''
-                        this.textValue = ''
-                        this.textRender = ''
-                    } else {
-                        this.$message.error('操作失败')
+                this.$confirm('确认发布？')
+                .then(_ => {
+                    let articleObj = {
+                        articleImgUrl: '',
+                        articleTitle: this.form.articleTitle,
+                        articleType:  this.form.articleType,
+                        articleText: this.textValue,
+                        articleRender: this.textRender,
+                        articleStatus: '1'
                     }
-                    
+                    this.loading = true
+                    axios.post('http://localhost:8888/api/addArticle',articleObj).then(res => {
+                        let data = res.data
+                        this.loading = false
+                        if (data.code == '000000') {
+                            this.$message({
+                                message: '发布成功！',
+                                type: 'success'
+                            })
+                            this.form.articleTitle = ''
+                            this.form.articleType = ''
+                            this.textValue = ''
+                            this.textRender = ''
+                        } else {
+                            this.$message.error('操作失败！')
+                        }
+                        
+                    })
                 })
+                .catch(_ => {})
             },
             save() {
                 if (this.form.articleTitle == '') {
-                    this.$message.error('文章名称不能为空')
+                    this.$message.error('文章名称不能为空！')
                     return
                 }
                 if (this.form.articleType == '') {
-                    this.$message.error('请选择文章类别')
+                    this.$message.error('请选择文章类别！')
                     return
                 }
                 if (this.textValue == '') {
-                    this.$message.error('文章内容不能为空')
+                    this.$message.error('文章内容不能为空！')
                     return
                 }
-                let articleObj = {
-                    articleImgUrl: '',
-                    articleTitle: this.form.articleTitle,
-                    articleType:  this.form.articleType,
-                    articleText: this.textValue,
-                    articleRender: this.textRender,
-                    articleStatus: '0'
-                }
-                this.loading = true
-                axios.post('http://localhost:8888/api/addArticle',articleObj).then(res => {
-                    let data = res.data
-                    this.loading = false
-                    if (data.code == '000000') {
-                        this.$message({
-                            message: '保存至草稿箱',
-                            type: 'success'
-                        })
-                        this.form.articleTitle = ''
-                        this.form.articleType = ''
-                        this.textValue = ''
-                        this.textRender = ''
-                    } else {
-                        this.$message.error('操作失败')
+                this.$confirm('保存至草稿箱？')
+                .then(_ => {
+                    let articleObj = {
+                        articleImgUrl: '',
+                        articleTitle: this.form.articleTitle,
+                        articleType:  this.form.articleType,
+                        articleText: this.textValue,
+                        articleRender: this.textRender,
+                        articleStatus: '0'
                     }
-                    
+                    this.loading = true
+                    axios.post('http://localhost:8888/api/addArticle',articleObj).then(res => {
+                        let data = res.data
+                        this.loading = false
+                        if (data.code == '000000') {
+                            this.$message({
+                                message: '成功保存至草稿箱！',
+                                type: 'success'
+                            })
+                            this.form.articleTitle = ''
+                            this.form.articleType = ''
+                            this.textValue = ''
+                            this.textRender = ''
+                        } else {
+                            this.$message.error('操作失败！')
+                        }
+                        
+                    })
                 })
+                .catch(_ => {})
             },
-            deletAll() {}
+            deletAll() {
+                this.$confirm('全部重置？')
+                .then(_ => {
+                    this.form.articleTitle = ''
+                    this.form.articleType = ''
+                    this.textValue = ''
+                    this.textRender = ''
+                })
+                .catch(_ => {})
+            }
         }
     }
 
