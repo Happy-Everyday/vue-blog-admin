@@ -70,7 +70,7 @@
 
 <script>
 
-  import axios from 'axios'
+  import { _axios } from '../../middleware/axios'
   const moment = require('moment')
   export default {
     data() {
@@ -100,8 +100,8 @@
                 pageSize: this.pageSize,
                 currentPage: this.currentPage
             }
-            axios.get('http://localhost:8888/api/getArticleList', {params: params}).then(res => {
-                let data = res.data
+            _axios('api/getArticleList', 'GET', params).then(res => {
+                let data = res
                 this.loading = false
                 if (data.code == '000000') {
                     this.articleList = data.data.articleList
@@ -151,8 +151,8 @@
                 } else if (articleObj.articleType == 'article') {
                     articleObj.articleTypeName = '文章'
                 }
-                axios.post('http://localhost:8888/api/updateArticle', articleObj).then(res => {
-                    let data = res.data
+                _axios('api/updateArticle', 'post', articleObj).then(res => {
+                    let data = res
                     this.loading = false
                     if (data.code == '000000') {
                         this.$message({
@@ -170,8 +170,8 @@
         handleDelete(data) {
             this.$confirm('确认删除？')
             .then(_ => {
-                axios.post('http://localhost:8888/api/delArticle', {deletArticleId: data._id}).then(res => {
-                    let data = res.data
+                _axios('api/delArticle', 'post', {deletArticleId: data._id}).then(res => {
+                    let data = res
                     this.loading = false
                     if (data.code == '000000') {
                         this.$message({

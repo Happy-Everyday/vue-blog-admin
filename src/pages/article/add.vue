@@ -23,7 +23,7 @@
 </template>
 <script>
 
-    import axios from 'axios'
+    import { _axios } from '../../middleware/axios'
     import { mavonEditor } from 'mavon-editor'
     import 'mavon-editor/dist/css/index.css'
     export default {
@@ -76,9 +76,14 @@
                         articleRender: this.textRender,
                         articleStatus: '1'
                     }
+                    if (articleObj.articleType == 'code') {
+                        articleObj.articleTypeName = '编程'
+                    } else if (articleObj.articleType == 'article') {
+                        articleObj.articleTypeName = '文章'
+                    }
                     this.loading = true
-                    axios.post('http://localhost:8888/api/addArticle',articleObj).then(res => {
-                        let data = res.data
+                    _axios('api/addArticle', 'post',articleObj).then(res => {
+                        let data = res
                         this.loading = false
                         if (data.code == '000000') {
                             this.$message({
@@ -126,8 +131,8 @@
                         articleObj.articleTypeName = '文章'
                     }
                     this.loading = true
-                    axios.post('http://localhost:8888/api/addArticle',articleObj).then(res => {
-                        let data = res.data
+                    _axios('api/addArticle', 'post', articleObj).then(res => {
+                        let data = res
                         this.loading = false
                         if (data.code == '000000') {
                             this.$message({

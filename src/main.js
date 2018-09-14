@@ -11,6 +11,18 @@ Vue.use(ElementUI)
 
 Vue.config.productionTip = false
 
+router.beforeEach((to, from, next) => {
+    let accessToken = sessionStorage.getItem('accessToken')
+    let accessTokenEndTime = sessionStorage.getItem('accessTokenEndTime')
+    if (!accessToken || accessTokenEndTime < new Date().getTime()) {
+        if (to.name != 'login') {
+            next({ name: 'login', replace: true})
+        }
+        next()
+    }
+    next()
+})
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app',

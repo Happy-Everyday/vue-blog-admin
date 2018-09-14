@@ -7,31 +7,42 @@
             <el-form-item label="密码">
                 <el-input v-model="form.password" type="password" placeholder="请输入密码"></el-input>
             </el-form-item>
-            <el-button type="primary" @click="onSubmit">立即登录</el-button>
+            <el-button type="primary" @click="onSubmit">登录</el-button>
         </el-form>
     </div>
 </template>
 <script>
 
+import { _axios } from '../middleware/axios'
+
 export default {
 
     components: {
-        },
-        props: {
-        },
-        data () {
-            return {
-                form: {
-                    account: '',
-                    password: ''
-                }
+    },
+    props: {
+    },
+    data () {
+        return {
+            form: {
+                account: '',
+                password: ''
             }
-        },
+        }
+    },
     created () {},
     mounted () {},
     methods: {
         onSubmit() {
-            this.$router.push('/layout')
+            _axios('api/loginin', 'POST', {
+                account: this.form.account,
+                password: this.form.password
+            }).then(res => {
+                if (res.code != '000000') {
+                    this.$message.error(res.msg)
+                    return
+                }
+                this.$router.push('/layout')
+            })
         }
     }
 }
