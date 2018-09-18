@@ -1,7 +1,7 @@
 import axios from 'axios'
 import router from '../router'
-// const baseUrl = 'http://localhost:8888/'
-const baseUrl = 'https://www.bestlifebestyue.com/admin-api/'
+const baseUrl = 'http://localhost:8888/'
+// const baseUrl = 'https://www.bestlifebestyue.com/admin-api/'
 /*
 * url 地址 string
 * method 请求方式 string
