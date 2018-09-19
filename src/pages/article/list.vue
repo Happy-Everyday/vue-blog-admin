@@ -6,8 +6,8 @@
             </el-form-item>
             <el-form-item label="文章类别">
                 <el-select v-model="formInline.articleType" placeholder="全部">
-                <el-option label="编程" value="code"></el-option>
-                <el-option label="文章" value="article"></el-option>
+                    <el-option label="日记" value="diary"></el-option>
+                    <el-option label="文章" value="article"></el-option>
                 </el-select>
             </el-form-item>
             <el-form-item>
@@ -148,8 +148,8 @@
             this.$confirm('确认移至回收站？')
             .then(_ => {
                 articleObj.articleStatus = '2'
-                if (articleObj.articleType == 'code') {
-                    articleObj.articleTypeName = '编程'
+                if (articleObj.articleType == 'diary') {
+                    articleObj.articleTypeName = '日记'
                 } else if (articleObj.articleType == 'article') {
                     articleObj.articleTypeName = '文章'
                 }
