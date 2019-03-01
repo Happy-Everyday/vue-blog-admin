@@ -125,8 +125,8 @@
                         articleRender: this.textRender,
                         articleStatus: '0'
                     }
-                    if (articleObj.articleType == 'code') {
-                        articleObj.articleTypeName = '编程'
+                    if (articleObj.articleType == 'diary') {
+                        articleObj.articleTypeName = '日记'
                     } else if (articleObj.articleType == 'article') {
                         articleObj.articleTypeName = '文章'
                     }
