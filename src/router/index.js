@@ -27,26 +27,41 @@ export default new Router({
             {
                 path: '/',
                 name: 'home',
+                meta: {
+                    title: '首页'
+                },
                 component: home,
             },
             {
                 path: '/article-add',
                 name: 'articleAdd',
+                meta: {
+                    title: '首页'
+                },
                 component: articleAdd,
             },
             {
                 path: '/article-list',
                 name: 'articleList',
+                meta: {
+                    title: '文章列表'
+                },
                 component: articleList,
             },
             {
                 path: '/article-drafts',
                 name: 'articleDrafts',
+                meta: {
+                    title: '草稿箱'
+                },
                 component: articleDrafts,
             },
             {
                 path: '/article-recycle',
                 name: 'articleRecycle',
+                meta: {
+                    title: '回收站'
+                },
                 component: articleRecycle,
             }
         ] 

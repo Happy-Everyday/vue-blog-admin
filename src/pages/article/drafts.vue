@@ -34,12 +34,16 @@
             <el-table-column
                 prop="articleTypeName"
                 label="文章类别"
-                width="120">
+                width="240">
+            </el-table-column>
+            <el-table-column
+                prop="articleAuthor"
+                label="文章作者"
+                width="240">
             </el-table-column>
             <el-table-column
                 prop="articleCreatedTime"
-                label="创建时间"
-                width="240">
+                label="创建时间">
             </el-table-column>
             <el-table-column label="操作" fixed="right" width="300">
                 <template slot-scope="scope">

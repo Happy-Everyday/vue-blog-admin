@@ -1,18 +1,36 @@
 <template>
     <div id="layout">
         <el-container>
-            <el-header><img src="@/assets/logo.png" alt="logo"><span>My Heart, My Words</span></el-header>
+            <el-header>
+                <el-menu
+                    :default-active="activeIndex"
+                    class="el-menu-demo"
+                    mode="horizontal"
+                    @select="handleSelect"
+                    background-color="#545c64"
+                    text-color="#fff"
+                    active-text-color="#ffd04b">
+                    <el-menu-item index="1">首页</el-menu-item>
+                    <el-submenu index="2">
+                        <template slot="title">文章管理</template>
+                        <el-menu-item index="2-1">文章列表</el-menu-item>
+                        <el-menu-item index="2-2">写文章</el-menu-item>
+                        <el-menu-item index="2-3">草稿箱</el-menu-item>
+                        <el-menu-item index="2-4">回收站</el-menu-item>
+                    </el-submenu>
+                    <el-menu-item index="3" disabled>消息中心</el-menu-item>
+                </el-menu>
+            </el-header>
             <el-container>
-                <el-aside width="200px">
-                    <el-menu :default-active="defaultActiveMenuIndex" :default-openeds="defaultOpendsMenuIndexs">
-                        <el-menu-item index='1' @click='toHome'><i class="el-icon-menu"></i>首页</el-menu-item>
-                        <el-submenu :key='menu.id' :index="index + 2 + ''" v-for="(menu, index) in menuList">
-                            <template slot="title"><i :class="menu.icon"></i>{{menu.title}}</template>
-                            <el-menu-item :key='menuChild.id' :index="(index + 2) + '-' + (num + 1)" v-for="(menuChild, num) in menu.children" @click="goTo(menuChild.url)">{{menuChild.title}}</el-menu-item>
-                        </el-submenu>
-                    </el-menu>
-                </el-aside>
-                <el-main><router-view/></el-main>
+                <el-main>
+                    <div v-if="pageHeaderTitle != '首页'">
+                        <el-breadcrumb separator-class="el-icon-arrow-right">
+                            <el-breadcrumb-item :to="{ path: '/layout' }">首页</el-breadcrumb-item>
+                            <el-breadcrumb-item>{{pageHeaderTitle}}</el-breadcrumb-item>
+                        </el-breadcrumb>
+                    </div>
+                    <router-view/>
+                </el-main>
             </el-container>
         </el-container>
     </div>
@@ -27,31 +45,31 @@
         },
         data () {
             return {
-                defaultActiveMenuIndex: "1",
-                defaultOpendsMenuIndexs: ["1"],
+                activeIndex: '1',
+                pageHeaderTitle: '首页',
                 menuList: [
                     {
-                        id: '1',
+                        id: '2',
                         title: '文章管理',
                         icon: 'el-icon-document',
                         children: [
                             {
-                                id: '11',
-                                title: '写文章',
-                                url: '/article-add'
-                            },
-                            {
-                                id: '12',
+                                id: '2-1',
                                 title: '文章列表',
                                 url: '/article-list'
                             },
                             {
-                                id: '13',
+                                id: '2-2',
+                                title: '写文章',
+                                url: '/article-add'
+                            },
+                            {
+                                id: '2-3',
                                 title: '草稿箱',
                                 url: '/article-drafts'
                             },
                             {
-                                id: '14',
+                                id: '2-4',
                                 title: '回收站',
                                 url: '/article-recycle'
                             }
@@ -62,35 +80,60 @@
         },
         created () {
             let path = this.$route.path
-            let defaultActiveFirstMenuIndex = 0
-            let defaultActiveSecondMenuIndex = 0
+            let activeIndex = '1'
+            let pageHeaderTitle = '首页'
             if (path === '/layout') {
-                this.defaultActiveMenuIndex = '1'
-                this.defaultOpendsMenuIndexs = []
+                this.activeIndex = '1'
             } else {
                 this.menuList.forEach((item, index) => {
                     if (item.children.length > 0) {
                         item.children.forEach((ele, num) => {
-                            if (ele.url === path) {
-                                defaultActiveFirstMenuIndex = index
-                                defaultActiveSecondMenuIndex = num
+                            if (ele.url == path) {
+                                activeIndex = ele.id
+                                pageHeaderTitle = this.$route.meta.title
                             }
                         })
                     }
                 })
-                this.defaultActiveMenuIndex = (defaultActiveFirstMenuIndex + 2) + '-' + (defaultActiveSecondMenuIndex + 1)
-                this.defaultOpendsMenuIndexs = [ defaultActiveFirstMenuIndex + 2 + '']
             }
+            this.activeIndex = activeIndex
+            this.pageHeaderTitle = pageHeaderTitle
         },
         mounted () {
         },
         methods: {
-            toHome() {
-                this.$router.push('/layout')
+            handleSelect(key, keyPath) {
+                switch (key) {
+                    case '1':
+                        this.$router.push('/layout')
+                        this.pageHeaderTitle = '首页'
+                        break;
+                    case '2-1':
+                        this.$router.push('/article-list')
+                        this.pageHeaderTitle = '文章列表'
+                        break;
+                    case '2-2':
+                        this.$router.push('/article-add')
+                        this.pageHeaderTitle = '写文章'
+                        break;
+                    case '2-3':
+                        this.$router.push('/article-drafts')
+                        this.pageHeaderTitle = '草稿箱'
+                        break;
+                    case '2-4':
+                        this.$router.push('/article-recycle')
+                        this.pageHeaderTitle = '回收站'
+                        break;
+                    case '3':
+                        this.$message({
+                            showClose: true,
+                            message: '消息功能暂未开放，敬请期待！',
+                            type: 'warning'
+                        });
+                        break;
+                }
             },
-            goTo(route) {
-                this.$router.push(route)
-            }
+            goBack () {}
         }
     }
 
